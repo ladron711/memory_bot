@@ -46,7 +46,7 @@ class DiaryStates(StatesGroup):
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
     
-    await message.answer("Ready to get your memories")
+    await message.answer("Ready to get your memories", reply_markup=starting_keyboard)
 
 @dp.message_handler(commands=['cancel'], state='*')
 async def cancel_handler(message: types.Message, state: FSMContext):
@@ -124,10 +124,10 @@ async def get_content(message: types.Message, state: FSMContext):
             async with session.post(API_URL, json=data) as response:
                 if response.status == 201:
                     logging.info(f"Status: {response.status}")
-                    await message.answer("Successfully saved", reply_markup=ReplyKeyboardRemove())
+                    await message.answer("Successfully saved", reply_markup=starting_keyboard)
                 else:
                     logging.error(f"Failed. Status: {response.status}")
-                    await message.answer("Failed", reply_markup=ReplyKeyboardRemove())
+                    await message.answer("Failed", reply_markup=starting_keyboard)
     except Exception as e:
         logging.exception(f"Error occurred while sending data: {e}")
         await message.answer(f"An error occurred: {str(e)}")
