@@ -10,7 +10,7 @@ from aiogram.dispatcher.handler import CancelHandler
 from aiogram.types import ReplyKeyboardRemove
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from keyboards import category_keyboard, mood_keyboard
+from keyboards import category_keyboard, mood_keyboard, starting_keyboard
 
 logging.basicConfig(
     level=logging.INFO,
@@ -54,7 +54,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
     logging.info("User cancelled the entry")
     await message.answer("Entry cancelled", reply_markup=ReplyKeyboardRemove())
 
-@dp.message_handler(commands=['new'])
+@dp.message_handler(lambda message: message.text == "add")
 async def start_diary(message: types.Message):
    
     await message.answer("choose category", reply_markup=category_keyboard)

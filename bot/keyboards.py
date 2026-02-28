@@ -1,5 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
+starting_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+starting_keyboard.add(KeyboardButton("add"))
 
 category_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 category_keyboard.add(KeyboardButton("работа"),
