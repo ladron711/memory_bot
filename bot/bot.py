@@ -52,7 +52,7 @@ async def start(message: types.Message):
 async def cancel_handler(message: types.Message, state: FSMContext):
     await state.finish()
     logging.info("User cancelled the entry")
-    await message.answer("Entry cancelled", reply_markup=ReplyKeyboardRemove())
+    await message.answer("Entry cancelled", reply_markup=starting_keyboard)
 
 @dp.message_handler(lambda message: message.text == "add")
 async def start_diary(message: types.Message):
