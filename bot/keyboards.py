@@ -9,10 +9,9 @@ category_keyboard.add(KeyboardButton("работа"),
                       KeyboardButton("учеба"),
 )
 category_keyboard.add(KeyboardButton("спорт"),
-                      KeyboardButton("хобби"),
+                      KeyboardButton("прочее"),
                       KeyboardButton("отдых"),
 )
-category_keyboard.add(KeyboardButton("прочее"))
 
 mood_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 mood_keyboard.add(KeyboardButton("😊"),
