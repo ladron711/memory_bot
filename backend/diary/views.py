@@ -12,8 +12,7 @@ class CreateDiaryEntryView(APIView):
         telegram_id = request.data.get("telegram_id")
         username = request.data.get("username")
         cat_name = request.data.get("category")
-        mood_name = request.data.get("mood")
-        sleep = request.data.get("sleep_quality")   
+        mood_name = request.data.get("mood") 
         condition = request.data.get("physical_condition")
         content = request.data.get("content")
 
@@ -26,7 +25,6 @@ class CreateDiaryEntryView(APIView):
             user=user,
             category=category,
             mood=mood,
-            sleep_quality=sleep,
             physical_condition=condition,
             content=content,
         )

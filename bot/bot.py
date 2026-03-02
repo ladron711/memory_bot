@@ -39,7 +39,6 @@ dp.middleware.setup(AccessMiddleware())
 class DiaryStates(StatesGroup):
     category = State()
     mood = State()
-    sleep = State()
     condition = State()
     content = State()
 
@@ -63,7 +62,7 @@ async def start_diary(message: types.Message):
 @dp.message_handler(state=DiaryStates.category)
 async def get_category(message: types.Message, state: FSMContext):
 
-    allowed = ["работа", "семья", "учеба", "спорт", "хобби", "отдых", "прочее"]
+    allowed = ["работа", "семья", "учеба", "спорт", "отдых", "прочее"]
     if message.text not in allowed:
         await message.answer("choose category from keyboard")
         return 
@@ -83,17 +82,7 @@ async def get_mood(message: types.Message, state: FSMContext):
         await message.answer("choose mood from keyboard")
         return
     await state.update_data(mood=mood_map[message.text])
-    await message.answer("choose sleep 1-5", reply_markup=ReplyKeyboardRemove())
-    await DiaryStates.sleep.set()
-
-@dp.message_handler(state=DiaryStates.sleep)
-async def get_sleep(message: types.Message, state: FSMContext):
-    allowed = ["1", "2", "3", "4", "5"]
-    if message.text not in allowed:
-        await message.answer("choose sleep quality from 1 to 5")
-        return
-    await state.update_data(sleep=int(message.text))
-    await message.answer("write physical condition")
+    await message.answer("write physical condition", reply_markup=ReplyKeyboardRemove())
     await DiaryStates.condition.set()
 
 @dp.message_handler(state=DiaryStates.condition)
@@ -113,7 +102,6 @@ async def get_content(message: types.Message, state: FSMContext):
         "username": message.from_user.username,
         "category": user_data.get("category"),
         "mood": user_data.get("mood"),
-        "sleep_quality": user_data.get("sleep"),
         "physical_condition": user_data.get("condition"),
         "content": user_data.get("content"),
     }

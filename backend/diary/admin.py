@@ -19,7 +19,7 @@ class MoodAdmin(admin.ModelAdmin):
 
 @admin.register(DiaryEntry)
 class DiaryEntryAdmin(admin.ModelAdmin):
-    list_display = ('user', 'category', 'mood', 'sleep_quality', 'physical_condition', 'content', 'created_at')
+    list_display = ('user', 'category', 'mood', 'physical_condition', 'content', 'created_at')
     search_fields = ('user__username', 'content')
     list_filter = ('category', 'mood', 'created_at')
     ordering = ('-created_at',)

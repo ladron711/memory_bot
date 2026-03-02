@@ -26,7 +26,6 @@ class DiaryEntry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='diary_entries')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='diary_entries')
     mood = models.ForeignKey(Mood, on_delete=models.SET_NULL, null=True, related_name='diary_entries')
-    sleep_quality = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, blank=True)
     physical_condition = models.TextField(null=True, blank=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
