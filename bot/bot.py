@@ -138,10 +138,9 @@ scheduler = AsyncIOScheduler(timezone="Asia/Almaty")
 scheduler.add_job(send_reminder, 'cron', hour=9, minute=15, kwargs={'text': "Good mornong! How did you sleep?"})
 scheduler.add_job(send_reminder, 'cron', hour=15, minute=15, kwargs={'text': "How's your day going?"})
 scheduler.add_job(send_reminder, 'cron', hour=22, minute=15, kwargs={'text': "Good evening! How was your day?"})
-scheduler.start()
-
 
 async def on_startup(dp):
+    scheduler.start()
     await bot.send_message(chat_id=ALLOWED_ID, text="Bot started")
 
 async def on_shutdown(dp):
