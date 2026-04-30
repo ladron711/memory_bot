@@ -10,6 +10,8 @@ from aiogram.dispatcher.handler import CancelHandler
 from aiogram.types import ReplyKeyboardRemove
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
 from keyboards import category_keyboard, mood_keyboard, starting_keyboard
 
 logging.basicConfig(
@@ -47,6 +49,7 @@ async def start(message: types.Message):
     
     await message.answer("Ready to get your memories", reply_markup=starting_keyboard)
 
+@dp.message_handler(lambda message: message.text == "cancel", state='*')
 @dp.message_handler(commands=['cancel'], state='*')
 async def cancel_handler(message: types.Message, state: FSMContext):
     await state.finish()
@@ -125,10 +128,27 @@ async def get_content(message: types.Message, state: FSMContext):
 @dp.errors_handler()
 async def global_error_handler(update, exception):
     logging.exception(f"Update caused error: {exception}")
+    await bot.send_message(chat_id=ALLOWED_ID, text=f"Error: {str(exception)}")
     return True
+
+async def send_reminder(text: str):
+    await bot.send_message(chat_id=ALLOWED_ID, text=text, reply_markup=starting_keyboard)
+
+scheduler = AsyncIOScheduler(timezone="Asia/Almaty")
+scheduler.add_job(send_reminder, 'cron', hour=9, minute=15, kwargs={'text': "Good mornong! How did you sleep?"})
+scheduler.add_job(send_reminder, 'cron', hour=15, minute=15, kwargs={'text': "How's your day going?"})
+scheduler.add_job(send_reminder, 'cron', hour=22, minute=15, kwargs={'text': "Good evening! How was your day?"})
+scheduler.start()
+
+
+async def on_startup(dp):
+    await bot.send_message(chat_id=ALLOWED_ID, text="Bot started")
+
+async def on_shutdown(dp):
+    await bot.send_message(chat_id=ALLOWED_ID, text="Bot stopped")
 
 
 if __name__ == '__main__':
     logging.info("Starting bot...")
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_startup, on_shutdown=on_shutdown)
     

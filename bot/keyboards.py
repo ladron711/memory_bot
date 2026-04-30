@@ -12,9 +12,11 @@ category_keyboard.add(KeyboardButton("спорт"),
                       KeyboardButton("прочее"),
                       KeyboardButton("отдых"),
 )
+category_keyboard.add(KeyboardButton("cancel"))
 
 mood_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 mood_keyboard.add(KeyboardButton("😊"),
                   KeyboardButton("😐"),
                   KeyboardButton("😞"),
 )
+mood_keyboard.add(KeyboardButton("cancel"))
