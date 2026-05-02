@@ -5,6 +5,8 @@ from rest_framework import status
 from .models import User, Category, Mood, DiaryEntry
 from .serializers import DiaryEntrySerializer
 
+from .analysis import run_daily_analysis, run_weekly_analysis, run_monthly_analysis
+
 
 class CreateDiaryEntryView(APIView):
 
@@ -33,5 +35,25 @@ class CreateDiaryEntryView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class RunAnalysisView(APIView):
+    def post(self, request):
+        analysis_type = request.data.get("type")  # daily, weekly, monthly
+        telegram_id = request.data.get("telegram_id")
+
+        try:
+            user = User.objects.get(telegram_id=telegram_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
+        if analysis_type == "daily":
+            analysis = run_daily_analysis(user)
+        elif analysis_type == "weekly":
+            analysis = run_weekly_analysis(user)
+        elif analysis_type == "monthly":
+            analysis = run_monthly_analysis(user)
+        else:
+            return Response({"error": "Invalid type"}, status=400)
+
+        return Response({"content": analysis.content})
     
 # Create your views here.

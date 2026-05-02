@@ -35,4 +35,23 @@ class DiaryEntry(models.Model):
 
     def __str__(self):
         return f"Entry by {self.user} on {self.created_at:%Y-%m-%d %H:%M}"
+    
+class LLMAnalysis(models.Model):
+    PERIOD_CHOICES = [
+        ('daily', 'Ежедневный'),
+        ('weekly', 'Еженедельный'),
+        ('monthly', 'Ежемесячный'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='analyses')
+    period_type = models.CharField(max_length=10, choices=PERIOD_CHOICES)
+    date_from = models.DateField()
+    date_to = models.DateField()
+    content = models.TextField()
+    patterns_json = models.JSONField(default=list)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user} — {self.period_type} {self.date_from}"

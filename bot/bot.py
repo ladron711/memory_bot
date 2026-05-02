@@ -27,6 +27,7 @@ if not BOT_TOKEN:
 
 ALLOWED_ID = int(os.getenv("ALLOWED_ID"))
 API_URL = os.getenv("API_URL")
+API_URL_BASE = os.getenv("API_URL_BASE")
 
 class AccessMiddleware(BaseMiddleware):
     async def on_pre_process_message(self, message: types.Message, data: dict):
@@ -131,13 +132,36 @@ async def global_error_handler(update, exception):
     await bot.send_message(chat_id=ALLOWED_ID, text=f"Error: {str(exception)}")
     return True
 
+
+async def send_analysis(analysis_type: str):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            API_URL_BASE,
+            json={"type": analysis_type, "telegram_id": ALLOWED_ID}
+        ) as response:
+            if response.status == 200:
+                data = await response.json()
+                await bot.send_message(
+                    chat_id=ALLOWED_ID,
+                    text=data["content"]
+                )
+            else:
+                await bot.send_message(
+                    chat_id=ALLOWED_ID,
+                    text="Ошибка при получении анализа"
+                )
+
 async def send_reminder(text: str):
     await bot.send_message(chat_id=ALLOWED_ID, text=text, reply_markup=starting_keyboard)
 
 scheduler = AsyncIOScheduler(timezone="Asia/Almaty")
 scheduler.add_job(send_reminder, 'cron', hour=9, minute=15, kwargs={'text': "Good mornong! How did you sleep?"})
 scheduler.add_job(send_reminder, 'cron', hour=15, minute=15, kwargs={'text': "How's your day going?"})
-scheduler.add_job(send_reminder, 'cron', hour=22, minute=15, kwargs={'text': "Good evening! How was your day?"})
+scheduler.add_job(send_reminder, 'cron', hour=21, minute=30, kwargs={'text': "Good evening! How was your day?"})
+scheduler.add_job(send_analysis, 'cron', hour=22, minute=10, kwargs={'analysis_type': 'daily'})
+scheduler.add_job(send_analysis, 'cron', hour=22, minute=15, day_of_week='sun', kwargs={'analysis_type': 'weekly'})
+scheduler.add_job(send_analysis, 'cron', hour=21, minute=0, day='1', kwargs={'analysis_type': 'monthly'})
+
 
 async def on_startup(dp):
     scheduler.start()

@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from diary.views import CreateDiaryEntryView
+from diary.views import CreateDiaryEntryView, RunAnalysisView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/diary-entry/', CreateDiaryEntryView.as_view(), name='diary-entry'),
+    path('api/run-analysis/', RunAnalysisView.as_view(), name='run-analysis'),
 ]
